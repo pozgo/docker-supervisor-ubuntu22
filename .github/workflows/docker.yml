@@ -46,8 +46,9 @@ jobs:
           fi
           
           # Test supervisor web interface is accessible
-          if ! curl -f -s http://localhost:9111 > /dev/null; then
-            echo "Supervisor web interface not accessible"
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:9111)
+          if [ "$HTTP_STATUS" != "200" ]; then
+            echo "Supervisor web interface not accessible (HTTP $HTTP_STATUS)"
             docker logs test-container
             exit 1
           fi
