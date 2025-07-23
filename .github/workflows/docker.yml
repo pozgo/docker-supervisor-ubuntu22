@@ -35,7 +35,7 @@ jobs:
       - name: Test Docker image
         run: |
           # Test container starts successfully
-          docker run -d --name test-container -e SUPERVISOR_PASSWORD=testpass ${{ env.IMAGE_NAME }}:test
+          docker run -d --name test-container -p 9111:9111 -e SUPERVISOR_PASSWORD=testpass ${{ env.IMAGE_NAME }}:test
           sleep 5
           
           # Check if container is running
@@ -46,8 +46,7 @@ jobs:
           fi
           
           # Test supervisor web interface is accessible
-          CONTAINER_IP=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' test-container)
-          if ! curl -f -s http://$CONTAINER_IP:9111 > /dev/null; then
+          if ! curl -f -s http://localhost:9111 > /dev/null; then
             echo "Supervisor web interface not accessible"
             docker logs test-container
             exit 1
