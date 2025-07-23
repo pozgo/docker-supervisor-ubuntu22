@@ -27,27 +27,32 @@ jobs:
         with:
           context: .
           push: false
+          load: true
           tags: ${{ env.IMAGE_NAME }}:test
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
       - name: Test Docker image
         run: |
+          # Set test credentials
+          TEST_USERNAME="sv"
+          TEST_PASSWORD="testpass"
+          
           # Test container starts successfully
-          docker run -d --name test-container ${{ env.IMAGE_NAME }}:test
+          docker run -d --name test-container -p 9111:9111 -e SUPERVISOR_PASSWORD=$TEST_PASSWORD ${{ env.IMAGE_NAME }}:test
           sleep 5
           
           # Check if container is running
-          if ! docker ps | grep -q test-container; then
+          if [ "$(docker ps -q -f name=test-container)" = "" ]; then
             echo "Container failed to start"
             docker logs test-container
             exit 1
           fi
           
           # Test supervisor web interface is accessible
-          CONTAINER_IP=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' test-container)
-          if ! curl -f -s http://$CONTAINER_IP:9111 > /dev/null; then
-            echo "Supervisor web interface not accessible"
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" --user $TEST_USERNAME:$TEST_PASSWORD http://localhost:9111)
+          if [ "$HTTP_STATUS" != "200" ]; then
+            echo "Supervisor web interface not accessible (HTTP $HTTP_STATUS)"
             docker logs test-container
             exit 1
           fi
@@ -68,7 +73,7 @@ jobs:
           sleep 5
           
           # Check if container is running with custom settings
-          if ! docker ps | grep -q test-env-container; then
+          if [ "$(docker ps -q -f name=test-env-container)" = "" ]; then
             echo "Container with custom env failed to start"
             docker logs test-env-container
             exit 1
