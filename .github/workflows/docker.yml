@@ -34,8 +34,12 @@ jobs:
 
       - name: Test Docker image
         run: |
+          # Set test credentials
+          TEST_USERNAME="sv"
+          TEST_PASSWORD="testpass"
+          
           # Test container starts successfully
-          docker run -d --name test-container -p 9111:9111 -e SUPERVISOR_PASSWORD=testpass ${{ env.IMAGE_NAME }}:test
+          docker run -d --name test-container -p 9111:9111 -e SUPERVISOR_PASSWORD=$TEST_PASSWORD ${{ env.IMAGE_NAME }}:test
           sleep 5
           
           # Check if container is running
@@ -46,7 +50,7 @@ jobs:
           fi
           
           # Test supervisor web interface is accessible
-          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:9111)
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" --user $TEST_USERNAME:$TEST_PASSWORD http://localhost:9111)
           if [ "$HTTP_STATUS" != "200" ]; then
             echo "Supervisor web interface not accessible (HTTP $HTTP_STATUS)"
             docker logs test-container
