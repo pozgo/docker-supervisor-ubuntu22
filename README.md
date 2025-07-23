@@ -221,6 +221,30 @@ Run with:
 docker-compose up -d
 ```
 
+## GitHub Actions CI/CD
+
+This repository uses GitHub Actions for automated building, testing, and deployment.
+
+### Workflow Triggers
+
+- **Build & Test**: Triggered on every Pull Request to `main` or `dev` branches
+- **Deploy**: Triggered only on GitHub releases/tags
+
+### Required GitHub Secrets
+
+To enable Docker Hub deployment, configure these secrets in your GitHub repository:
+
+| Secret | Description |
+|--------|-------------|
+| `DOCKERHUB_USERNAME` | Your Docker Hub username |
+| `DOCKERHUB_TOKEN` | Docker Hub access token (not password) |
+
+### Multi-Platform Support
+
+The image is built for multiple architectures:
+- `linux/amd64` (Intel/AMD 64-bit)
+- `linux/arm64` (ARM 64-bit)
+
 ## License
 
 MIT License - see [LICENSE](LICENSE) file for details.
