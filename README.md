@@ -30,7 +30,7 @@ docker run -it -p 9111:9111 -v /host/data:/data polinux/supervisor-ubuntu22
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `SUPERVISOR_USERNAME` | `sv` | Username for supervisor web interface |
-| `SUPERVISOR_PASSWORD` | `password` | Password for supervisor web interface |
+| `SUPERVISOR_PASSWORD` | `password` | Password for supervisor web interface (runtime default) |
 | `SUPERVISOR_USER` | `supervisor` | Non-root user for running supervisor |
 | `SUPERVISOR_UID` | `1000` | User ID for supervisor user |
 | `SUPERVISOR_GID` | `1000` | Group ID for supervisor user |

@@ -12,6 +12,9 @@ SUPERVISOR_PARAMS='-c /etc/supervisord.conf'
 
 log "Starting supervisor bootstrap process"
 
+# Set default password if not provided
+export SUPERVISOR_PASSWORD=${SUPERVISOR_PASSWORD:-"password"}
+
 # Create directories for supervisor's UNIX socket and logs
 mkdir -p /data/conf /data/run /data/logs
 chmod 755 /data/conf /data/run /data/logs
